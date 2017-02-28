@@ -44,7 +44,7 @@ ENV PATH $CAFFE_ROOT/build/tools:$PYCAFFE_ROOT:$PATH
 RUN echo "$CAFFE_ROOT/build/lib" >> /etc/ld.so.conf.d/caffe.conf && ldconfig
 
 ##
-RUN make py
+
 RUN make test -j"$(nproc)"
 
 WORKDIR /workspace
