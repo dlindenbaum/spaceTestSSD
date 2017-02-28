@@ -45,7 +45,7 @@ RUN echo "$CAFFE_ROOT/build/lib" >> /etc/ld.so.conf.d/caffe.conf && ldconfig
 
 ##
 
-RUN make test -j"$(nproc)"
+
 
 WORKDIR /workspace
 
