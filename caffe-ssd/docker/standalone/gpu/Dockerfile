@@ -34,7 +34,7 @@ WORKDIR $CAFFE_ROOT
 # FIXME: use ARG instead of ENV once DockerHub supports this
 ENV CLONE_TAG=ssd
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
-RUN git clone --depth 1 https://va-vsrv-github.a.internal/Cosmiq/singleShotDetector.git . && \
+RUN git clone --depth 1 https://github.com/dlindenbaum/spaceTestSSD.git . && \
     pip install --upgrade
 
 ENV CAFFE_ROOT=/opt/caffe-ssd
