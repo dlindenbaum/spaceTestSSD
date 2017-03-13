@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python-numpy \
         python-pip \
         python-setuptools \
-        python-scipy && \
+        python-scipy
 
 # for opencv
 RUN mkdir -p ~/opencv cd ~/opencv && \
