@@ -28,16 +28,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV GIT_BASE=/opt/
 WORKDIR $GIT_BASE
 
-ENV CAFFE_ROOT=/opt/caffe-ssd
-WORKDIR $CAFFE_ROOT
-
 # FIXME: use ARG instead of ENV once DockerHub supports this
 ENV CLONE_TAG=ssd
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
 RUN git clone --depth 1 https://github.com/dlindenbaum/spaceTestSSD.git . && \
     pip install --upgrade
 
-ENV CAFFE_ROOT=/opt/caffe-ssd
+ENV CAFFE_ROOT=/opt/caffe-ssd/
 WORKDIR $CAFFE_ROOT
 
 RUN cd python && for req in $(cat requirements.txt) pydot; do pip install $req; done && cd .. && \
