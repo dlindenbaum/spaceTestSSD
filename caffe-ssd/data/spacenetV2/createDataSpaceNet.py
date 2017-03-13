@@ -1,10 +1,9 @@
 import os
 import sys
 import glob
-import cv2
+from osgeo import gdal
 import random
 sys.path.extend([os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../../utilities/python/')])
-from spaceNetUtilities import geoTools as gT
 from spaceNetUtilities import labelTools as lT
 
 
@@ -56,13 +55,12 @@ for aoiSubDir in listOfAOIs:
                                   segment=True,
                                   bufferSizePix=2.5)
 
-            cv2image = cv2.imread(rasterImage)
-            width, height = cv2image.shape[:2]
+            gdalimage = gdal.Open(rasterImage)
             entry= {'rasterFileName': rasterImage,
                     'geoJsonFileName': geoJson,
                     'annotationName': annotationName,
-                    'width': width,
-                    'height': height,
+                    'width': gdalimage.RasterXSize,
+                    'height': gdalimage.RasterYSize,
                     'basename': os.path.splitext(os.path.basename(rasterImage))[0]
                     }
 
