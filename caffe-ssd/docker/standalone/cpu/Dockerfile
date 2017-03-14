@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM dlindenbaum/cpu-spacenet-utils:latest
 MAINTAINER caffe-maint@googlegroups.com
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
