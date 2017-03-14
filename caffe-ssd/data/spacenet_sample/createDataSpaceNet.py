@@ -56,7 +56,11 @@ for aoiSubDir in listOfAOIs:
                                   bufferSizePix=2.5)
 
             gdalimage = gdal.Open(rasterImage)
-            entry= {'rasterFileName': rasterImage,
+            ## todo make this more workable with 8bit and 16bit
+            outputRaster = annotationName.replace('.xml', '.tif')
+            outputRaster = outputRaster.replace('_img', '_8bit_img')
+
+            entry= {'rasterFileName': outputRaster,
                     'geoJsonFileName': geoJson,
                     'annotationName': annotationName,
                     'width': gdalimage.RasterXSize,

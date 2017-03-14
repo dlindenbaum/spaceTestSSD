@@ -6,7 +6,7 @@ echo "+++Root dir" $root_dir
 cd $root_dir
 
 redo=1
-data_root_dir="/data/"
+data_root_dir="/"
 echo "+++data_root_dir" $data_root_dir
 dataset_name="spacenet_sample"
 echo "+++dataset_name" $dataset_name
