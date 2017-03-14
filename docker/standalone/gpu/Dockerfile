@@ -37,6 +37,8 @@ RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip
 RUN git clone --depth 1 https://github.com/dlindenbaum/spaceTestSSD.git . && \
     pip install --upgrade
 
+WORKDIR $CAFFE_ROOT
+RUN pwd
 RUN cd python && for req in $(cat requirements.txt) pydot; do pip install $req; done && cd .. && \
     git clone https://github.com/NVIDIA/nccl.git && cd nccl && make -j install && cd .. && rm -rf nccl && \
     mkdir build && cd build && \
