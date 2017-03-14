@@ -57,7 +57,7 @@ for aoiSubDir in listOfAOIs:
 
             gdalimage = gdal.Open(rasterImage)
             ## todo make this more workable with 8bit and 16bit
-            outputRaster = annotationName.replace('.xml', '.tif')
+            outputRaster = annotationName.replace('.xml', '.jpg')
             outputRaster = outputRaster.replace('_img', '_8bit_img')
 
             entry= {'rasterFileName': outputRaster,
