@@ -8,7 +8,7 @@ You can also use the bash script `get_data <data-dir>` to get the entire data fr
 ## Test to see if you are able to read the geojson files 
 
 `
-cd spacement/utilities/python/
+cd spacement/utilities_test/python/
 `
 `
 ./read3band.py
@@ -17,7 +17,7 @@ cd spacement/utilities/python/
 The response should be `251994`
 
 ## Test to see if the bounding boxes are being generated correctly.
-`cd spacement/utilities/python/`
+`cd spacement/utilities_test/python/`
 
 `overlay.py`
 

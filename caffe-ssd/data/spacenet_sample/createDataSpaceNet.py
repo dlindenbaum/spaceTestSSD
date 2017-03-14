@@ -3,7 +3,7 @@ import sys
 import glob
 from osgeo import gdal
 import random
-sys.path.extend([os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../../utilities/python/')])
+sys.path.extend([os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../../utilities_test/python/')])
 from spaceNetUtilities import labelTools as lT
 
 

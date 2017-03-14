@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 cur_dir=$(cd $( dirname ${BASH_SOURCE[0]} ) && pwd )
 echo "+++Current dir" $cur_dir
 root_dir=$cur_dir/../..
@@ -6,7 +7,7 @@ echo "+++Root dir" $root_dir
 cd $root_dir
 
 redo=1
-data_root_dir="/data/"
+data_root_dir="/"
 echo "+++data_root_dir" $data_root_dir
 dataset_name="spacenetV2"
 echo "+++dataset_name" $dataset_name
