@@ -32,9 +32,9 @@ ENV CAFFE_ROOT=/opt/caffe/
 WORKDIR $CAFFE_ROOT
 
 # FIXME: use ARG instead of ENV once DockerHub supports this
-ENV CLONE_TAG=ssd
+ENV CLONE_TAG=spacenetV2
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
-RUN git clone --depth 1 https://github.com/dlindenbaum/spaceTestSSD.git . && \
+RUN git clone -b ${CLONE_TAG} --depth 1 https://github.com/dlindenbaum/spaceTestSSD.git . && \
     pip install --upgrade
 
 WORKDIR $CAFFE_ROOT
