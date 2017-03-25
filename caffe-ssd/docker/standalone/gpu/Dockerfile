@@ -1,4 +1,4 @@
-FROM dlindenbaum/gpu-spacenet-utils:latest
+FROM cosmiqworks/spacenet-utilities-gpu:latest
 LABEL maintainer dlindenbaum
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
