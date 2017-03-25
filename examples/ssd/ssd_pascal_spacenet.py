@@ -93,7 +93,7 @@ if __name__ == "__main__":
                         default=650,
                         type=int)
     parser.add_argument("--batchSize", help="Batch Size for gpu training",
-                        default=2,
+                        default=4,
                         type=int)
     parser.add_argument("--baseLr",
                         help="Base Learning Rate Modifier"
@@ -103,21 +103,28 @@ if __name__ == "__main__":
                         default=1,
                         type=float)
 
+    parser.add_argument("--restartTraining",
+                        help='Restart Training, If not specified, will start from last model',
+                        action='store_false')
+    parser.add_argument("--removeOldModels",
+                        help='Remove Old Models',
+                        action='store_true')
+
 
     args = parser.parse_args()
     ### Modify the following parameters accordingly ###
     # The directory which contains the caffe code.
     # We assume caffe root is specified as environment variable from docker container.
     caffe_root = os.environ['CAFFE_ROOT']
-    args.baseLr
+
 
     # Set true if you want to start training right after generating all files.
     run_soon = True
     # Set true if you want to load from most recently saved snapshot.
     # Otherwise, we will load from the pretrain_model defined below.
-    resume_training = True
+    resume_training = args.restartTraining
     # If true, Remove old model files.
-    remove_old_models = False
+    remove_old_models = args.removeOldModels
 
     # The database file for training data. Created by data/VOC0712/create_data.sh
     train_data = args.trainLMDB
@@ -386,7 +393,7 @@ if __name__ == "__main__":
     num_gpus = len(gpulist)
 
     # Divide the mini-batch to different GPUs.
-    batch_size = 4
+    batch_size = args.batchSize
     accum_batch_size = 32
     iter_size = accum_batch_size / batch_size
     solver_mode = P.Solver.CPU
