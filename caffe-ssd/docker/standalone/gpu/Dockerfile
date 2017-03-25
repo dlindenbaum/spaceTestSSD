@@ -33,11 +33,12 @@ WORKDIR $GIT_BASE
 
 # FIXME: use ARG instead of ENV once DockerHub supports this
 ENV CLONE_TAG=ssd
+RUN mkdir spaceSSD
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
-RUN git clone --depth 1 https://github.com/dlindenbaum/spaceTestSSD.git . && \
+RUN git clone --depth 1 https://github.com/dlindenbaum/spaceTestSSD.git spaceSSD && \
     pip install --upgrade
 
-ENV CAFFE_ROOT=/opt/caffe-ssd/
+ENV CAFFE_ROOT=/opt/spaceSSD/caffe-ssd/
 WORKDIR $CAFFE_ROOT
 
 RUN cd python && for req in $(cat requirements.txt) pydot; do pip install $req; done && cd .. && \
