@@ -118,6 +118,7 @@ if __name__ == "__main__":
 
   # get caffe root directory
   caffe_root = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+  caffe_root = os.path.join(caffe_root, 'caffe-ssd')
   if anno_type == "detection":
     cmd = "{}/build/tools/convert_annoset" \
         " --anno_type={}" \
