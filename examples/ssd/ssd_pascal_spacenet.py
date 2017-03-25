@@ -95,14 +95,21 @@ if __name__ == "__main__":
     parser.add_argument("--batchSize", help="Batch Size for gpu training",
                         default=2,
                         type=int)
+    parser.add_argument("--baseLr",
+                        help="Base Learning Rate Modifier"
+                             "Multiply by ssd calculated learning rate"
+                             "For example 0.5 will reduce learning rate by half"
+                             "If not specified, default is 1 which acts as pass through",
+                        default=1,
+                        type=float)
 
 
     args = parser.parse_args()
     ### Modify the following parameters accordingly ###
     # The directory which contains the caffe code.
-    # We assume you are running the script at the CAFFE_ROOT.
-    caffe_root = os.getcwd()
-    caffe_root = os.path.join(caffe_root, 'caffe-ssd')
+    # We assume caffe root is specified as environment variable from docker container.
+    caffe_root = os.environ['CAFFE_ROOT']
+    args.baseLr
 
     # Set true if you want to start training right after generating all files.
     run_soon = True
@@ -406,7 +413,7 @@ if __name__ == "__main__":
     # Ideally test_batch_size should be divisible by num_test_image,
     # otherwise mAP will be slightly off the true value.
     test_iter = int(math.ceil(float(num_test_image) / test_batch_size))
-
+    base_lr = base_lr*args.baseLr
     solver_param = {
         # Train parameters
         'base_lr': base_lr,
