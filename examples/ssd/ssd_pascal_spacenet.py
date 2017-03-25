@@ -102,6 +102,7 @@ if __name__ == "__main__":
     # The directory which contains the caffe code.
     # We assume you are running the script at the CAFFE_ROOT.
     caffe_root = os.getcwd()
+    caffe_root = os.path.join(caffe_root, 'caffe-ssd')
 
     # Set true if you want to start training right after generating all files.
     run_soon = True
