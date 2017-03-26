@@ -139,7 +139,7 @@ for outputRaster in outputRasterList:
         buildingEntryList.append(buildingEntry)
 
 with open(solutionFileLocation, 'wb') as csvfile:
-    csvwriter = csv.writer(csvfile, delimiter=', ', quoting=csv.QUOTE_MINIMAL)
+    csvwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
     csvwriter.writerow(['ImageId', 'BuildingId', 'PolygonWKT', 'Confidence'])
     for buildingEntry in buildingEntryList:
         csvwriter.writerow(buildingEntry)
