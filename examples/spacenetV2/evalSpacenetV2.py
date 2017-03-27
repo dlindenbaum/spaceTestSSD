@@ -66,7 +66,7 @@ transformer.set_channel_swap('data', (2 ,1 ,0))  # the reference model has chann
 
 outputRasterList = []
 with open(outputRasterFileName, 'r') as csvfile:
-    csvreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+    csvreader = csv.reader(csvfile, delimiter=',')
     for row in csvreader:
         outputRasterList.append(row[0])
 
