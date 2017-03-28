@@ -10,19 +10,17 @@
 # In[8]:
 
 import numpy as np
-import matplotlib.pyplot as plt
 import os
 from osgeo import ogr, osr, gdal
 import glob
 import subprocess
-get_ipython().magic(u'matplotlib inline')
-
-plt.rcParams['figure.figsize'] = (10, 10)
-plt.rcParams['image.interpolation'] = 'nearest'
-plt.rcParams['image.cmap'] = 'gray'
 
 # Make sure that caffe is on the python path:
-caffe_root = os.environ['CAFFE_ROOT']  # this file is expected to be in {caffe_root}/examples
+try:
+    caffe_root = os.environ['CAFFE_ROOT']  # this file is expected to be in {caffe_root}/examples
+except:
+    caffe_root = '/opt/spaceSSD/caffe-ssd/'
+
 import os
 os.chdir(caffe_root)
 import sys
@@ -33,61 +31,63 @@ caffe.set_device(0)
 caffe.set_mode_gpu()
 
 
+import csv
+def createListOfRaster(rasterImageLocation, outputRasterListFileLoc, ):
+    outputRasterListFileLoc = '/data/spacenetV2_Test/testrasterList.csv'
+    outputPixType = 'Byte'
+    outputFormat = 'JPEG'
+    outputRasterList = []
+    convertTo8Bit = True
+
+    rasterImageList = glob.glob(os.path.join(rasterImageLocation, '*.tif'))
+
+    for rasterImageName in rasterImageList:
+        srcRaster = gdal.Open(rasterImageName)
+        outputRaster = rasterImageName
+
+        if convertTo8Bit:
+            cmd = ['gdal_translate', '-ot', outputPixType, '-of', outputFormat, '-co', '"PHOTOMETRIC=rgb"']
+            scaleList = []
+            for bandId in range(srcRaster.RasterCount):
+                bandId = bandId + 1
+                band = srcRaster.GetRasterBand(bandId)
+                min = band.GetMinimum()
+                max = band.GetMaximum()
+
+                # if not exist minimum and maximum values
+                if min is None or max is None:
+                    (min, max) = band.ComputeRasterMinMax(1)
+                cmd.append('-scale_{}'.format(bandId))
+                cmd.append('{}'.format(0))
+                cmd.append('{}'.format(max))
+                cmd.append('{}'.format(0))
+                cmd.append('{}'.format(255))
+
+            cmd.append(rasterImageName)
+
+            if outputFormat == 'JPEG':
+                outputRaster = outputRaster.replace('.tif', '.jpg')
+            else:
+                outputRaster = outputRaster.replace('.xml', '.tif')
+
+            outputRaster = outputRaster.replace('_img', '_img')
+            outputRasterList.append(outputRaster)
+            cmd.append(outputRaster)
+            print(cmd)
+            subprocess.call(cmd)
+
+    with open(outputRasterListFileLoc, 'w') as csvfile:
+        csvwriter = csv.writer(csvfile, delimiter=',',
+                               quotechar='|', quoting=csv.QUOTE_MINIMAL)
+
+        for outputRaster in outputRasterList:
+            csvwriter.writerow([outputRaster])
 
 # In[11]:
 
 ## Convert All images to 3band byte JPEG
-import csv
-outputRasterListFileLoc = '/data/spacenetV2_Test/testrasterList.csv'
-outputPixType = 'Byte'
-outputFormat = 'JPEG'
-outputRasterList = []
-convertTo8Bit=True
 
-rasterImageLocation = '/data/spacenetV2_Test/AOI_2_Vegas_Test/RGB-PanSharpen/'
-rasterImageList = glob.glob(os.path.join(rasterImageLocation, '*.tif'))
 
-for rasterImageName in rasterImageList:
-    srcRaster = gdal.Open(rasterImageName)
-    outputRaster = rasterImageName
-    
-    if convertTo8Bit:
-        cmd = ['gdal_translate', '-ot', outputPixType, '-of', outputFormat, '-co', '"PHOTOMETRIC=rgb"']
-        scaleList = []
-        for bandId in range(srcRaster.RasterCount):
-            bandId = bandId+1
-            band=srcRaster.GetRasterBand(bandId)
-            min = band.GetMinimum()
-            max = band.GetMaximum()
-
-            # if not exist minimum and maximum values
-            if min is None or max is None:
-                (min, max) = band.ComputeRasterMinMax(1)
-            cmd.append('-scale_{}'.format(bandId))
-            cmd.append('{}'.format(0))
-            cmd.append('{}'.format(max))
-            cmd.append('{}'.format(0))
-            cmd.append('{}'.format(255))
-
-        cmd.append(rasterImageName)
-
-        if outputFormat == 'JPEG':
-            outputRaster = outputRaster.replace('.tif', '.jpg')
-        else:
-            outputRaster = outputRaster.replace('.xml', '.tif')
-
-        outputRaster = outputRaster.replace('_img', '_img')
-        outputRasterList.append(outputRaster)
-        cmd.append(outputRaster)
-        print(cmd)
-        subprocess.call(cmd)
-        
-with open(outputRasterListFileLoc, 'w') as csvfile:
-    csvwriter = csv.writer(csvfile, delimiter=',',
-                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    
-    for outputRaster in outputRasterList:
-        csvwriter.writerow([outputRaster])
         
 
 
