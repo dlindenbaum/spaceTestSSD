@@ -79,6 +79,7 @@ def deResRasterImage(inputImage, outputImage, finalPixelSize):
     cmd = ['gdalwarp', '-of', 'JPEG', '-r', 'cubic', '-ts', "{}".format(int(finalPixelSize)), '0']
     cmd.append(inputImage)
     cmd.append(outputImage)
+    subprocess.call(cmd)
 
     return outputImage
 
