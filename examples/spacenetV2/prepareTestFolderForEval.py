@@ -60,6 +60,33 @@ def writeRasterListToFile(outputRasterList, outputRasterListFileLoc):
         for outputRaster in outputRasterList:
             csvwriter.writerow([outputRaster])
 
+
+
+def deResRasterList(inputList, outputDirectory, finalPixelSize):
+
+    outputList = []
+
+    for inputImage in inputList:
+        baseImageID = os.path.basename(inputImage)
+        outputImage = os.path.join(outputDirectory, baseImageID)
+        outputImage = deResRasterImage(inputImage, outputImage, finalPixelSize)
+
+        outputList.append(outputImage)
+
+    return outputList
+
+def deResRasterImage(inputImage, outputImage, finalPixelSize):
+    cmd = ['gdalwarp', '-of', 'JPEG', '-r', 'cubic', '-ts', "{}".format(int(finalPixelSize)), '0']
+    cmd.append(inputImage)
+    cmd.append(outputImage)
+
+    return outputImage
+
+
+
+
+
+
 if __name__ == '__main__':
 
 
@@ -78,4 +105,34 @@ if __name__ == '__main__':
     outputRasterList = convertRasterListTo8BitJPEG(fullimgList)
 
     writeRasterListToFile(outputRasterList, outputRasterListFileLoc)
+
+    outputDirectory = '/data/spacenetV2_Test0p5gsd'
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
+
+    outputRasterList0p5m = deResRasterList(outputRasterList, outputDirectory, 400)
+
+    outputRasterListFileLoc = '/data/spacenetV2Test_All_0p5m.csv'
+    writeRasterListToFile(outputRasterList0p5m, outputRasterListFileLoc)
+
+    outputDirectory = '/data/spacenetV2_Test0p75gsd'
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
+
+    outputRasterList0p75m = deResRasterList(outputRasterList, outputDirectory, 300)
+
+    outputRasterListFileLoc = '/data/spacenetV2Test_All_0p75m.csv'
+    writeRasterListToFile(outputRasterList0p75m, outputRasterListFileLoc)
+
+
+    outputDirectory = '/data/spacenetV2_Test1p0gsd'
+    if not os.path.exists(outputDirectory):
+        os.makedirs(outputDirectory)
+
+    outputRasterList1p0m = deResRasterList(outputRasterList, outputDirectory, 200)
+
+    outputRasterListFileLoc = '/data/spacenetV2Test_All_1p0m.csv'
+    writeRasterListToFile(outputRasterList1p0m, outputRasterListFileLoc)
+
+
 
