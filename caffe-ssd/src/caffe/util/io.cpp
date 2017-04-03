@@ -91,6 +91,7 @@ cv::Mat ReadImageToCVMat(const string& filename, const int height,
     LOG(ERROR) << "Could not open or find file " << filename;
     return cv_img_origin;
   }
+  cv_img_origin = convertTo(cv_img_origin, CV_32F)
   if (min_dim > 0 || max_dim > 0) {
     int num_rows = cv_img_origin.rows;
     int num_cols = cv_img_origin.cols;
