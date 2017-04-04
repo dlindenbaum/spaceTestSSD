@@ -76,7 +76,9 @@ def deResRasterList(inputList, outputDirectory, finalPixelSize):
     return outputList
 
 def deResRasterImage(inputImage, outputImage, finalPixelSize):
-    cmd = ['gdalwarp', '-of', 'JPEG', '-r', 'cubic', '-ts', "{}".format(int(finalPixelSize)), '0']
+
+
+    cmd = ['gdal_translate', '-of', 'JPEG', '-r', 'cubic', '-outsize', "{}".format(int(finalPixelSize)), '0']
     cmd.append(inputImage)
     cmd.append(outputImage)
     subprocess.call(cmd)
