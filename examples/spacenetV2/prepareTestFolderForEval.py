@@ -79,7 +79,7 @@ def deResRasterList(inputList, outputDirectory, deResPixelSize, finalPixelSize=-
 
 def deResRasterImage(inputImage, outputImage, deResPixelSize, finalPixelSize=-1):
 
-    tmpImage = os.path.splitext(outputImage)+ '.vrt'
+    tmpImage = os.path.splitext(outputImage)[0]+ '.vrt'
 
     if finalPixelSize == -1:
         finalPixelSize = deResPixelSize
