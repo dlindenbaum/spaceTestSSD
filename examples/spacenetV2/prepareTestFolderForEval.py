@@ -64,7 +64,8 @@ def readRasterListToFile(outputRasterListFileLoc):
     with open(outputRasterListFileLoc, 'r') as csvfile:
         csvreader = csv.reader(csvfile, delimiter=',')
         outputRasterList = []
-        for line  in outputRasterList:
+        for line  in csvreader:
+            print(line)
             outputRasterList.append(line[0])
 
     return outputRasterList
@@ -81,7 +82,7 @@ def deResRasterList(inputList, outputDirectory, deResPixelSize, finalPixelSize=-
         outputImage = os.path.join(outputDirectory, baseImageID)
         outputImage = deResRasterImage(inputImage, outputImage, deResPixelSize, finalPixelSize=finalPixelSize,
                                        gausianBlur=gausianBlur)
-
+        print(outputImage)
         outputList.append(outputImage)
 
     return outputList
@@ -208,6 +209,7 @@ if __name__ == '__main__':
         outputDirectory = '/data/spacenetV2_Test0p6gsdblur'
         if not os.path.exists(outputDirectory):
             os.makedirs(outputDirectory)
+        print ('blurTime)')
         outputRasterList0p5m = deResRasterListBlur(outputRasterList, outputDirectory, 0.6, 0.3)
 
         outputRasterListFileLoc = '/data/spacenetV2Test_All_0p6mblur.csv'
