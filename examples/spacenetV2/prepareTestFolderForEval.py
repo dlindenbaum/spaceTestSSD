@@ -171,8 +171,7 @@ if __name__ == '__main__':
         outputRasterList = convertRasterListTo8BitJPEG(fullimgList)
         writeRasterListToFile(outputRasterList, outputRasterListFileLoc)
     else:
-        with open(outputRasterListFileLoc, 'r') as f:
-            outputRasterList = readRasterListToFile(outputRasterListFileLoc)
+        outputRasterList = readRasterListToFile(outputRasterListFileLoc)
 
     outputDirectory = '/data/spacenetV2_Test0p5gsd'
     if gdalTranslate:
