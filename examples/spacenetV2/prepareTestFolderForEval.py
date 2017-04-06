@@ -62,14 +62,16 @@ def writeRasterListToFile(outputRasterList, outputRasterListFileLoc):
 
 
 
-def deResRasterList(inputList, outputDirectory, finalPixelSize):
+def deResRasterList(inputList, outputDirectory, deResPixelSize, finalPixelSize=-1):
 
     outputList = []
+    if finalPixelSize == -1:
+        finalPixelSize = deResPixelSize
 
     for inputImage in inputList:
         baseImageID = os.path.basename(inputImage)
         outputImage = os.path.join(outputDirectory, baseImageID)
-        outputImage = deResRasterImage(inputImage, outputImage, finalPixelSize)
+        outputImage = deResRasterImage(inputImage, outputImage, deResPixelSize, finalPixelSize=finalPixelSize)
 
         outputList.append(outputImage)
 
