@@ -3,7 +3,7 @@ import os
 from osgeo import ogr, osr, gdal
 import glob
 import subprocess
-
+import cv2
 import csv
 
 def convertRasterListTo8BitJPEG(rasterImageList):
@@ -62,7 +62,7 @@ def writeRasterListToFile(outputRasterList, outputRasterListFileLoc):
 
 
 
-def deResRasterList(inputList, outputDirectory, deResPixelSize, finalPixelSize=-1):
+def deResRasterList(inputList, outputDirectory, deResPixelSize, finalPixelSize=-1, gausianBlur=-1):
 
     outputList = []
     if finalPixelSize == -1:
@@ -71,28 +71,37 @@ def deResRasterList(inputList, outputDirectory, deResPixelSize, finalPixelSize=-
     for inputImage in inputList:
         baseImageID = os.path.basename(inputImage)
         outputImage = os.path.join(outputDirectory, baseImageID)
-        outputImage = deResRasterImage(inputImage, outputImage, deResPixelSize, finalPixelSize=finalPixelSize)
+        outputImage = deResRasterImage(inputImage, outputImage, deResPixelSize, finalPixelSize=finalPixelSize,
+                                       gausianBlur=gausianBlur)
 
         outputList.append(outputImage)
 
     return outputList
 
-def deResRasterImage(inputImage, outputImage, deResPixelSize, finalPixelSize=-1):
+def deResRasterImage(inputImage, outputImage, deResPixelSize, finalPixelSize=-1, gausianBlur=-1):
 
-    tmpImage = os.path.splitext(outputImage)[0]+ '.vrt'
+    if gausianBlur == -1:
+        tmpImage = os.path.splitext(outputImage)[0]+ '.vrt'
 
-    if finalPixelSize == -1:
-        finalPixelSize = deResPixelSize
+        if finalPixelSize == -1:
+            finalPixelSize = deResPixelSize
 
-    cmd = ['gdal_translate', '-of', 'VRT', '-r', 'cubic', '-outsize', "{}".format(int(deResPixelSize)), '0']
-    cmd.append(inputImage)
-    cmd.append(tmpImage)
-    subprocess.call(cmd)
+        cmd = ['gdal_translate', '-of', 'VRT', '-r', 'cubic', '-outsize', "{}".format(int(deResPixelSize)), '0']
+        cmd.append(inputImage)
+        cmd.append(tmpImage)
+        subprocess.call(cmd)
 
-    cmd = ['gdal_translate', '-of', 'JPEG', '-r', 'cubic', '-outsize', "{}".format(int(finalPixelSize)), '0']
-    cmd.append(tmpImage)
-    cmd.append(outputImage)
-    subprocess.call(cmd)
+        cmd = ['gdal_translate', '-of', 'JPEG', '-r', 'cubic', '-outsize', "{}".format(int(finalPixelSize)), '0']
+        cmd.append(tmpImage)
+        cmd.append(outputImage)
+        subprocess.call(cmd)
+    else:
+
+        img = cv2.imread(inputImage)
+        bluimg = cv2.GaussianBlur(img, (gausianBlur, gausianBlur), 0)
+        imgNew = cv2.resize(bluimg, (deResPixelSize, deResPixelSize), interpolation=cv2.INTER_CUBIC)
+        imgNew = cv2.resize(imgNew, (finalPixelSize, finalPixelSize), interpolation=cv2.INTER_CUBIC)
+        cv2.imwrite(outputImage, imgNew)
 
     return outputImage
 
@@ -111,6 +120,8 @@ if __name__ == '__main__':
                             'AOI_4_Shanghai_Test/RGB-PanSharpen/',
                             'AOI_5_Khartoum_Test/RGB-PanSharpen']
     fullimgList = []
+    gdalTranslate = False
+    gausianBlur = True
     for dataDirectory in dataDirectoryLocList:
 
         imgList = glob.glob(os.path.join(dataDirectoryBase, dataDirectory, '*.tif'))
@@ -121,32 +132,59 @@ if __name__ == '__main__':
     writeRasterListToFile(outputRasterList, outputRasterListFileLoc)
 
     outputDirectory = '/data/spacenetV2_Test0p5gsd'
-    if not os.path.exists(outputDirectory):
-        os.makedirs(outputDirectory)
+    if gdalTranslate:
+        outputDirectory = '/data/spacenetV2_Test0p5gsd'
+        if not os.path.exists(outputDirectory):
+            os.makedirs(outputDirectory)
 
-    outputRasterList0p5m = deResRasterList(outputRasterList, outputDirectory, 400, finalPixelSize=650)
+        outputRasterList0p5m = deResRasterList(outputRasterList, outputDirectory, 400, finalPixelSize=650)
 
-    outputRasterListFileLoc = '/data/spacenetV2Test_All_0p5m.csv'
-    writeRasterListToFile(outputRasterList0p5m, outputRasterListFileLoc)
+        outputRasterListFileLoc = '/data/spacenetV2Test_All_0p5m.csv'
+        writeRasterListToFile(outputRasterList0p5m, outputRasterListFileLoc)
 
-    outputDirectory = '/data/spacenetV2_Test0p75gsd'
-    if not os.path.exists(outputDirectory):
-        os.makedirs(outputDirectory)
+        outputDirectory = '/data/spacenetV2_Test0p75gsd'
+        if not os.path.exists(outputDirectory):
+            os.makedirs(outputDirectory)
 
-    outputRasterList0p75m = deResRasterList(outputRasterList, outputDirectory, 300, finalPixelSize=650)
+        outputRasterList0p75m = deResRasterList(outputRasterList, outputDirectory, 300, finalPixelSize=650)
 
-    outputRasterListFileLoc = '/data/spacenetV2Test_All_0p75m.csv'
-    writeRasterListToFile(outputRasterList0p75m, outputRasterListFileLoc)
-
-
-    outputDirectory = '/data/spacenetV2_Test1p0gsd'
-    if not os.path.exists(outputDirectory):
-        os.makedirs(outputDirectory)
-
-    outputRasterList1p0m = deResRasterList(outputRasterList, outputDirectory, 200, finalPixelSize=650)
-
-    outputRasterListFileLoc = '/data/spacenetV2Test_All_1p0m.csv'
-    writeRasterListToFile(outputRasterList1p0m, outputRasterListFileLoc)
+        outputRasterListFileLoc = '/data/spacenetV2Test_All_0p75m.csv'
+        writeRasterListToFile(outputRasterList0p75m, outputRasterListFileLoc)
 
 
+        outputDirectory = '/data/spacenetV2_Test1p0gsd'
+        if not os.path.exists(outputDirectory):
+            os.makedirs(outputDirectory)
 
+        outputRasterList1p0m = deResRasterList(outputRasterList, outputDirectory, 200, finalPixelSize=650)
+
+        outputRasterListFileLoc = '/data/spacenetV2Test_All_1p0m.csv'
+        writeRasterListToFile(outputRasterList1p0m, outputRasterListFileLoc)
+
+
+    if gausianBlur:
+        outputDirectory = '/data/spacenetV2_Test0p6gsdblur'
+        if not os.path.exists(outputDirectory):
+            os.makedirs(outputDirectory)
+        outputRasterList0p5m = deResRasterList(outputRasterList, outputDirectory, 333, finalPixelSize=650, gausianBlur=1)
+
+        outputRasterListFileLoc = '/data/spacenetV2Test_All_0p6mblur.csv'
+        writeRasterListToFile(outputRasterList0p5m, outputRasterListFileLoc)
+
+        outputDirectory = '/data/spacenetV2_Test0p9gsdblur'
+        if not os.path.exists(outputDirectory):
+            os.makedirs(outputDirectory)
+
+        outputRasterList0p75m = deResRasterList(outputRasterList, outputDirectory, 222, finalPixelSize=650, gausianBlur=2)
+
+        outputRasterListFileLoc = '/data/spacenetV2Test_All_0p9mBlur.csv'
+        writeRasterListToFile(outputRasterList0p75m, outputRasterListFileLoc)
+
+        outputDirectory = '/data/spacenetV2_Test1p25gsdblur'
+        if not os.path.exists(outputDirectory):
+            os.makedirs(outputDirectory)
+
+        outputRasterList1p0m = deResRasterList(outputRasterList, outputDirectory, 166, finalPixelSize=650, gausianBlur=3)
+
+        outputRasterListFileLoc = '/data/spacenetV2Test_All_1p2mblur.csv'
+        writeRasterListToFile(outputRasterList1p0m, outputRasterListFileLoc)
