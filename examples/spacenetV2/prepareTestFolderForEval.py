@@ -75,11 +75,20 @@ def deResRasterList(inputList, outputDirectory, finalPixelSize):
 
     return outputList
 
-def deResRasterImage(inputImage, outputImage, finalPixelSize):
+def deResRasterImage(inputImage, outputImage, deResPixelSize, finalPixelSize=-1):
 
+    tmpImage = os.path.splitext(outputImage)+ '.vrt'
+
+    if finalPixelSize == -1:
+        finalPixelSize = deResPixelSize
+
+    cmd = ['gdal_translate', '-of', 'VRT', '-r', 'cubic', '-outsize', "{}".format(int(deResPixelSize)), '0']
+    cmd.append(inputImage)
+    cmd.append(tmpImage)
+    subprocess.call(cmd)
 
     cmd = ['gdal_translate', '-of', 'JPEG', '-r', 'cubic', '-outsize', "{}".format(int(finalPixelSize)), '0']
-    cmd.append(inputImage)
+    cmd.append(tmpImage)
     cmd.append(outputImage)
     subprocess.call(cmd)
 
@@ -113,7 +122,7 @@ if __name__ == '__main__':
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
 
-    outputRasterList0p5m = deResRasterList(outputRasterList, outputDirectory, 400)
+    outputRasterList0p5m = deResRasterList(outputRasterList, outputDirectory, 400, finalPixelSize=650)
 
     outputRasterListFileLoc = '/data/spacenetV2Test_All_0p5m.csv'
     writeRasterListToFile(outputRasterList0p5m, outputRasterListFileLoc)
@@ -122,7 +131,7 @@ if __name__ == '__main__':
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
 
-    outputRasterList0p75m = deResRasterList(outputRasterList, outputDirectory, 300)
+    outputRasterList0p75m = deResRasterList(outputRasterList, outputDirectory, 300, finalPixelSize=650)
 
     outputRasterListFileLoc = '/data/spacenetV2Test_All_0p75m.csv'
     writeRasterListToFile(outputRasterList0p75m, outputRasterListFileLoc)
@@ -132,7 +141,7 @@ if __name__ == '__main__':
     if not os.path.exists(outputDirectory):
         os.makedirs(outputDirectory)
 
-    outputRasterList1p0m = deResRasterList(outputRasterList, outputDirectory, 200)
+    outputRasterList1p0m = deResRasterList(outputRasterList, outputDirectory, 200, finalPixelSize=650)
 
     outputRasterListFileLoc = '/data/spacenetV2Test_All_1p0m.csv'
     writeRasterListToFile(outputRasterList1p0m, outputRasterListFileLoc)
