@@ -1,4 +1,4 @@
-FROM cosmiqworks/spacenet-utilities-gpu
+FROM cosmiqworks/spacenet-utilities-gpu:latest
 LABEL maintainer dlindenbaum
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -28,17 +28,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 
 
-ENV CAFFE_ROOT=/opt/caffe/
-WORKDIR $CAFFE_ROOT
+ENV GIT_BASE=/opt/
+WORKDIR $GIT_BASE
 
 # FIXME: use ARG instead of ENV once DockerHub supports this
-ENV CLONE_TAG=spacenetV2
+ENV CLONE_TAG=ssd
+RUN mkdir spaceSSD
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
-RUN git clone -b ${CLONE_TAG} --depth 1 https://github.com/dlindenbaum/spaceTestSSD.git . && \
+RUN git clone --depth 1 https://github.com/dlindenbaum/spaceTestSSD.git spaceSSD && \
     pip install --upgrade
 
+ENV CAFFE_ROOT=/opt/spaceSSD/caffe-ssd/
 WORKDIR $CAFFE_ROOT
-RUN pwd
+
 RUN cd python && for req in $(cat requirements.txt) pydot; do pip install $req; done && cd .. && \
     git clone https://github.com/NVIDIA/nccl.git && cd nccl && make -j install && cd .. && rm -rf nccl && \
     mkdir build && cd build && \
