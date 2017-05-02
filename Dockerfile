@@ -32,11 +32,13 @@ ENV GIT_BASE=/opt/
 WORKDIR $GIT_BASE
 
 # FIXME: use ARG instead of ENV once DockerHub supports this
-ENV CLONE_TAG=ssd
+
 RUN mkdir spaceSSD
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
-RUN git clone --depth 1 https://github.com/dlindenbaum/spaceTestSSD.git spaceSSD && \
-    pip install --upgrade
+RUN pip install --upgrade
+
+COPY ./caffe-ssd $GIT_BASE/spaceSSD/
+
 
 ENV CAFFE_ROOT=/opt/spaceSSD/caffe-ssd/
 WORKDIR $CAFFE_ROOT
@@ -54,8 +56,6 @@ RUN echo "$CAFFE_ROOT/build/lib" >> /etc/ld.so.conf.d/caffe.conf && ldconfig
 RUN cd build && make pycaffe
 
 ##
-
-
 
 WORKDIR /workspace
 
