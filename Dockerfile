@@ -37,7 +37,7 @@ RUN mkdir spaceSSD
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py && rm get-pip.py
 RUN pip install --upgrade
 
-COPY ./caffe-ssd $GIT_BASE/spaceSSD/
+COPY . /opt/spaceSSD/
 
 
 ENV CAFFE_ROOT=/opt/spaceSSD/caffe-ssd/
